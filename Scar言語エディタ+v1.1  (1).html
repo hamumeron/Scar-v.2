@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+
+<style id="webmakerstyle">
+
+</style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>PC負荷テスト</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #111;
+      color: #0f0;
+      text-align: center;
+      padding-top: 100px;
+    }
+    button {
+      padding: 1em 2em;
+      font-size: 1.5em;
+      margin: 1em;
+      background-color: #333;
+      color: #0f0;
+      border: 2px solid #0f0;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚠️ PC性能ストレステスト</h1>
+  <p>以下のボタンを押すとCPU使用率が急上昇します。</p>
+  <button onclick="startStress()">負荷開始</button>
+  <button onclick="stopStress()">停止</button>
+
+  <script>
+    let workers = [];
+    function startStress() {
+      stopStress(); // 既存のワーカーを停止
+      const cpuCount = navigator.hardwareConcurrency || 4;
+      for (let i = 0; i < cpuCount; i++) {
+        const worker = new Worker(URL.createObjectURL(new Blob([`
+          self.onmessage = function() {
+            while (true) {
+              // 無限計算ループ（CPU使用率を上げる）
+              Math.sqrt(Math.random() * Math.random());
+            }
+          }
+        `], { type: 'application/javascript' })));
+        worker.postMessage('start');
+        workers.push(worker);
+      }
+    }
+
+    function stopStress() {
+      workers.forEach(w => w.terminate());
+      workers = [];
+    }
+  </script>
+</body>
+</html>
+
+
+
+</body>
+</html>
